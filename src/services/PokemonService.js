@@ -4,7 +4,7 @@ import { realtimeDb } from '@/js/firebase.js'; // Adjust the path to your fireba
 
 // Then use realtimeDb in your service
 const dbRef = ref(realtimeDb);
-const db = getDatabase(); // Assuming you've initialized Firebase elsewhere
+// const db = getDatabase(); // Assuming you've initialized Firebase elsewhere
 
 const getPokemons = async () => {
   try {
@@ -28,20 +28,27 @@ const getPokemons = async () => {
 };
 
 const getPokemon = async (name) => {
-  try {
-    const dbRef = ref(realtimeDb);
-    const snapshot = await get(child(dbRef, `pokemons/${name}`));
-    if (snapshot.exists()) {
-      return { id: snapshot.key, ...snapshot.val() };
-    } else {
-      console.log("No data available");
-      return null;
+    try {
+      const dbRef = ref(realtimeDb);
+      const snapshot = await get(child(dbRef, 'pokemons/'));
+      if (snapshot.exists()) {
+        let foundPokemon = null;
+        snapshot.forEach(childSnapshot => {
+          if (childSnapshot.val().name === name) {
+            foundPokemon = { id: childSnapshot.key, ...childSnapshot.val() };
+          }
+        });
+        return foundPokemon;
+      } else {
+        console.log("No data available");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching pokemon:", error);
+      throw error;
     }
-  } catch (error) {
-    console.error("Error fetching pokemon:", error);
-    throw error;
-  }
-};
+  };
+  
 
 export default {
   getPokemons,
