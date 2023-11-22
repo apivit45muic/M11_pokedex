@@ -2,29 +2,26 @@
 import { ref, onMounted } from 'vue'
 import PokemonService from '@/services/PokemonService.js'
 
-// In PokemonDetailsView.vue script setup
-
-const pokemon = ref(null)
+const pokemon = ref(null);
 const props = defineProps({
     name: { type: String, required: true }
-})
+});
 
-onMounted(() => {
-    console.log("Pokemon name received in details view:", props.name); // Log the received name
+onMounted(async () => {
+    console.log("Pokemon name received in details view:", props.name);
 
-    PokemonService.getPokemon(props.name)
-    .then((response) => {
-        if (response.data.length > 0) {
-            pokemon.value = response.data[0];
-            console.log("Fetched Pokemon Details:", pokemon.value); // Log fetched pokemon details
+    try {
+        const fetchedPokemon = await PokemonService.getPokemon(props.name);
+        if (fetchedPokemon) {
+            pokemon.value = fetchedPokemon;
+            console.log("Fetched Pokemon Details:", pokemon.value);
         } else {
             console.error("Pokemon not found");
         }
-    })
-    .catch((error) => {
+    } catch (error) {
         console.error("Error fetching pokemon details:", error);
-    })
-})
+    }
+});
 
 const getTypeColor = (type) => {
   switch (type.toLowerCase()) {

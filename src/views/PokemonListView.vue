@@ -1,20 +1,20 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import ProductCard from '@/components/ProductCard.vue'
-import PokemonService from '@/services/PokemonService.js' // Import the Pokemon service
+import PokemonService from '@/services/PokemonService.js'
 
-const pokemons = ref(null) // Change the variable name to reflect its purpose
+const pokemons = ref(null)
 
-onMounted(() => {
-  PokemonService.getPokemons() // Use the appropriate service method
-  .then((response)=> {
-    pokemons.value = response.data // Assign the response to pokemons
-  })
-  .catch((error) => {
-    console.log(error)
-  })
+onMounted(async () => {
+  try {
+    const fetchedPokemons = await PokemonService.getPokemons();
+    pokemons.value = fetchedPokemons;
+  } catch (error) {
+    console.error("Error fetching pokemons:", error);
+  }
 })
 </script>
+
 
 
 <template>
